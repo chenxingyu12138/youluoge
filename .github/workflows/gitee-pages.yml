@@ -1,36 +1,29 @@
-name: Deploy Gitee Pages
+name: Sync to Gitee
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
-  deploy:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - name: 检查 Gitee 密钥是否已配置
+      - name: 检查 Gitee 密钥
         env:
           HAS_USER: ${{ secrets.GITEE_USERNAME }}
           HAS_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          HAS_PWD: ${{ secrets.GITEE_PASSWORD }}
         run: |
-          if [ -z "$HAS_USER" ] || [ -z "$HAS_TOKEN" ] || [ -z "$HAS_PWD" ]; then
-            echo "::error::请先在 GitHub 仓库 Settings → Secrets and variables → Actions 中添加："
-            echo "  GITEE_USERNAME  GITEE_TOKEN  GITEE_PASSWORD"
+          if [ -z "$HAS_USER" ] || [ -z "$HAS_TOKEN" ]; then
+            echo "::error::缺少 GITEE_USERNAME 或 GITEE_TOKEN"
             exit 1
           fi
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: 确保 Gitee 仓库存在
-        env:
-          GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-        run: |
-          curl -s -X POST "https://gitee.com/api/v5/user/repos?access_token=${GITEE_TOKEN}" \
-            -d "name=youluoge&private=false&description=游略阁游戏攻略" || true
-
-      - name: 同步代码到 Gitee
+      - name: 同步到 Gitee
         env:
           GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
@@ -40,11 +33,3 @@ jobs:
           git remote remove gitee 2>/dev/null || true
           git remote add gitee "https://${GITEE_USERNAME}:${GITEE_TOKEN}@gitee.com/${GITEE_USERNAME}/youluoge.git"
           git push gitee main --force
-
-      - name: 部署 Gitee Pages
-        uses: yanglbme/gitee-pages-action@main
-        with:
-          gitee-username: ${{ secrets.GITEE_USERNAME }}
-          gitee-password: ${{ secrets.GITEE_PASSWORD }}
-          gitee-repo: ${{ secrets.GITEE_USERNAME }}/youluoge
-          branch: main
