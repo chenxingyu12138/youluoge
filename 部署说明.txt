@@ -16,40 +16,51 @@ GitHub 仓库：https://github.com/chenxingyu12138/youluoge
 临时解决：
   1. 把 DNS 改为 223.5.5.5 或 114.114.114.114
   2. 用手机 4G/5G 热点访问（绕过公司 WiFi）
-  3. 使用下方 Gitee Pages 方案（国内最稳）
+  3. 使用下方「国内可访问」方案（见第一节）
 
 
-一、Gitee Pages 部署（★ 国内用户推荐）
+【重要】Gitee Pages 已不可用
+--------------------------------
+❌ 错误地址（不存在，勿用）：
+   https://gitee.com/xingyuchen12138/youluoge/pages
+
+✅ 曾经的正确入口（在仓库页面内，不是 /pages 后缀）：
+   打开 https://gitee.com/xingyuchen12138/youluoge
+   → 顶部或右侧「服务」→「Gitee Pages」
+
+⚠ 2024 年起 Gitee 社区版 Pages 已停止服务（无正式公告，客服确认已下线）。
+   因此上述入口可能整页消失或无法启动，这不是你操作错误。
+   代码仍可同步到 Gitee 作备份，但不能再靠 *.gitee.io 对外访问。
+
+
+一、国内可访问部署（★ 推荐）
 --------------------------------
 
-适合：国内访客、公司网络、无需 VPN
+方案 A — GitHub Pages（免费，先试这个）
+  1. 打开 https://github.com/chenxingyu12138/youluoge/settings/pages
+  2. Source 选「GitHub Actions」（仓库已含 .github/workflows/github-pages.yml）
+  3. 推送 main 分支后 Actions 自动部署
+  4. 访问：https://chenxingyu12138.github.io/youluoge/
+  说明：部分公司网络仍可能慢或间歇打不开，但比 vercel/pages.dev 稳。
 
-1. 注册 Gitee：https://gitee.com
+方案 B — 腾讯云 EdgeOne Pages（国内 CDN，免费档）
+  1. 打开 https://pages.edgeone.ai/zh
+  2. 注册 → 新建项目 → 上传站点根目录全部文件（含 index.html、css、js）
+  3. 获得 *.edgeone.app 域名，国内访问通常较快
 
-2. 导入 GitHub 仓库
-   右上角 + → 从 GitHub/GitLab 导入仓库
-   → 填入 https://github.com/chenxingyu12138/youluoge
-   → 导入（公开仓库）
+方案 C — 腾讯云 CloudBase 静态托管（有免费额度）
+  1. 控制台 → 云开发 → 静态网站托管
+  2. 上传 build 产物（本项目无需构建，直接上传根目录静态文件）
+  文档：https://cloud.tencent.com/document/product/876
 
-3. 开启 Pages
-   进入 youluoge 仓库 → 服务 → Gitee Pages
-   → 部署分支：main
-   → 部署目录：/（根目录）
-   → 点击启动/更新
+方案 D — 上码 Upma 等国内静态托管（拖拽上传即可）
+  https://www.upma.cn （面向国内优化，有免费套餐）
 
-4. 获得访问地址（约 1 分钟生效）
-   https://你的Gitee用户名.gitee.io/youluoge/
-   例：https://chenxingyu12138.gitee.io/youluoge/
-
-5. 开启访问统计（51.la，免费，国内可用）
-   a) 打开 https://www.51.la 注册
-   b) 添加网站，获得统计 ID（一串字符）
-   c) 编辑仓库中 js/analytics-config.js
-      把 LA_ID: '' 改为 LA_ID: '你的ID'
-   d) 提交后 Gitee Pages → 更新（重新部署）
-   e) 登录 51.la 后台查看 PV/UV/来源
-
-注意：Gitee 为纯静态托管，/admin 自建统计不可用，请用 51.la。
+访问统计（国内静态站通用）：
+  a) https://www.51.la 注册 → 添加网站 → 获得 ID
+  b) 编辑 js/analytics-config.js，LA_ID: '你的ID'
+  c) 重新上传/部署站点
+  注意：纯静态托管下 /admin 自建统计不可用，请用 51.la。
 
 
 二、Cloudflare Pages（海外 / 部分国内网络）
@@ -74,14 +85,14 @@ https://youluoge.vercel.app（国内通常打不开）
 四、常见问题
 --------------------------------
 
-Q: pages.dev 和 vercel.app 都打不开？
-A: 正常，请用 Gitee Pages（第一节）。
+Q: gitee.com/.../youluoge/pages 打不开？
+A: 该 URL 本身不存在；且 Gitee Pages 服务已下线，请用第一节替代方案。
 
-Q: Gitee Pages 更新后内容没变？
-A: 服务 → Gitee Pages → 点「更新」重新部署。
+Q: pages.dev 和 vercel.app 都打不开？
+A: 正常（DNS 污染），请用 GitHub Pages 或 EdgeOne/CloudBase。
 
 Q: 51.la 没数据？
-A: 确认 analytics-config.js 已填 LA_ID 并重新部署 Pages。
+A: 确认 analytics-config.js 已填 LA_ID 并重新部署站点。
 
 Q: 想同时给国内外用户访问？
-A: 国内分享 Gitee 链接，海外分享 youluoge.pages.dev。
+A: 国内分享 GitHub Pages 或 EdgeOne 链接，海外分享 youluoge.pages.dev。
