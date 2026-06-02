@@ -1,87 +1,102 @@
 游略阁 — 免费部署与访问统计配置说明
 ================================
 
-一、部署到 Vercel（免费，推荐）
+【重要】国内访问说明
+--------------------------------
+Vercel 域名（*.vercel.app）在中国大陆经常无法打开或极慢，
+这是网络环境限制，不是网站代码问题。
+
+解决方案（任选其一）：
+  A. 改用 Cloudflare Pages 部署（推荐，见下方第二节）
+  B. 修改 DNS 为 223.5.5.5 或 114.114.114.114 后重试 Vercel 链接
+  C. 使用 VPN 访问 Vercel 域名
+
+
+GitHub 仓库
+--------------------------------
+https://github.com/chenxingyu12138/youluoge
+
+
+一、Cloudflare Pages 部署（国内推荐，免费）
 --------------------------------
 
-1. 注册账号
-   打开 https://vercel.com 用 GitHub 账号登录（免费）
+1. 注册 Cloudflare
+   打开 https://dash.cloudflare.com 注册/登录（免费）
 
-2. 上传代码到 GitHub
-   - 在 GitHub 新建仓库（如 youluoge）
-   - 将「网站」文件夹内所有文件推送到仓库
+2. 导入 GitHub 项目
+   - Workers & Pages → Create → Pages → Connect to Git
+   - 选择 GitHub 账号，授权后选中 youluoge 仓库
+   - 构建设置：
+     Framework preset : None
+     Build command    : （留空）
+     Build output     : /
+   - 点击 Save and Deploy，约 1-2 分钟完成
 
-   本项目已推送到：
-   https://github.com/chenxingyu12138/youluoge
+3. 获得访问地址
+   形如：https://youluoge.pages.dev
+   国内一般可正常访问，可直接分享给任何人
 
-   本地命令示例（在项目文件夹内执行）：
-   git init
-   git add .
-   git commit -m "init youluoge site"
-   git branch -M main
-   git remote add origin https://github.com/你的用户名/youluoge.git
-   git push -u origin main
+4. 开启访问统计
+   a) 创建 KV 命名空间
+      Workers & Pages → KV → Create namespace
+      名称：youluoge-stats
 
-3. 导入 Vercel（一键链接）
-   直接打开以下链接导入项目：
+   b) 绑定到 Pages 项目
+      Pages → youluoge → Settings → Functions
+      → KV namespace bindings → Add binding
+      Variable name : STATS_KV
+      KV namespace  : youluoge-stats
+
+   c) 添加环境变量
+      Settings → Environment variables → Add
+      Variable : ADMIN_PASSWORD
+      Value    : 你的管理密码
+
+   d) 重新部署
+      Deployments → 最新 → ... → Retry deployment
+
+5. 查看访问数据
+   https://youluoge.pages.dev/admin
+   输入 ADMIN_PASSWORD 登录
+
+
+二、Vercel 部署（海外访问友好，免费）
+--------------------------------
+
+1. 安装 GitHub 集成
+   https://github.com/apps/vercel → Configure
+   授权访问 youluoge 仓库
+
+2. 一键导入
    https://vercel.com/new/import?s=https://github.com/chenxingyu12138/youluoge
+   Framework: Other，Root: ./，直接 Deploy
 
-   或手动：Vercel 控制台 → Add New → Project → 选择 youluoge → Deploy
-   - 等待约 1 分钟，获得公网地址，例如：
-     https://youluoge.vercel.app
+3. 访问地址
+   https://youluoge.vercel.app
+   （国内可能无法访问，见顶部说明）
 
-4. 任何人即可通过该链接访问你的网站
+4. 开启统计（Vercel KV）
+   Storage → Create Database → KV → Connect to Project
+   Environment Variables → ADMIN_PASSWORD = 你的密码 → Redeploy
+   后台：https://youluoge.vercel.app/admin
 
 
-二、开启访问统计（免费 KV 数据库）
+三、常见问题
 --------------------------------
 
-1. 在 Vercel 项目页 → Storage → Create Database
-   - 选择 KV（Redis）
-   - 名称随意（如 youluoge-kv）→ Create
-
-2. 连接数据库
-   - 创建后点击 Connect to Project
-   - 选择你的项目 → 确认
-   - 环境变量 KV_REST_API_URL、KV_REST_API_TOKEN 会自动注入
-
-3. 设置管理密码
-   - 项目 → Settings → Environment Variables
-   - 新增：ADMIN_PASSWORD = 你自定义的密码（如 MySecret2026）
-   - 保存后到 Deployments → 最新部署 → Redeploy（重新部署一次）
-
-4. 查看访问数据
-   - 打开：https://你的域名.vercel.app/admin
-   - 输入 ADMIN_PASSWORD 密码登录
-   - 可查看：总 PV、今日 PV/UV、7 日趋势、热门页面、最近访问记录
-
-
-三、本地测试（可选）
---------------------------------
-
-1. 安装 Vercel CLI：
-   npm i -g vercel
-
-2. 在项目目录执行：
-   vercel login
-   vercel link
-   vercel env pull .env.local
-   vercel dev
-
-3. 本地访问 http://localhost:3000
-
-
-四、常见问题
---------------------------------
+Q: youluoge.vercel.app 打不开？
+A: 国内网络对 vercel.app 限制较多。请改用 Cloudflare Pages（第一节），
+   或切换 DNS 到 223.5.5.5 后重试。
 
 Q: 部署后统计一直是 0？
-A: 确认 KV 已 Connect to Project，且 Redeploy 过；浏览几个页面后再刷新 admin。
+A: 确认 KV 已绑定（Cloudflare: STATS_KV / Vercel: KV_REST_API_*），
+   且已 Redeploy；浏览几个页面后再刷新 admin。
 
 Q: admin 提示密码错误？
-A: 检查 Vercel 环境变量 ADMIN_PASSWORD 是否设置，Redeploy 后重试。
+A: 检查 ADMIN_PASSWORD 环境变量是否设置，重新部署后再试。
 
 Q: 想用自定义域名？
-A: Vercel → Settings → Domains → 添加你的域名，按提示配置 DNS（免费）。
+A: Cloudflare Pages 或 Vercel 的 Settings → Domains 均可免费绑定。
 
-Q: 免费额度够用吗？
-A: Vercel Hobby 版对个人网站完全够用；KV 免费额度约 256MB，访问量统计可支撑百万级 PV。
+Q: 两个平台都部署了，统计会重复吗？
+A: 会各自独立统计，建议只对外分享一个主域名。
