@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>访问统计 — 游略阁后台</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    .admin-page { padding: 48px 0 80px; min-height: 100vh; }
+    .login-box, .stats-panel {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+    }
+    .login-box h1 { margin-bottom: 8px; }
+    .login-box p { color: var(--text-secondary); margin-bottom: 24px; }
+    .login-box input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: inherit;
+      margin-bottom: 16px;
+    }
+    .stats-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .stat-card strong {
+      display: block;
+      font-size: 2rem;
+      color: var(--accent-light);
+      margin-bottom: 4px;
+    }
+    .stat-card span { color: var(--text-muted); font-size: 0.875rem; }
+    .chart-bars { display: flex; align-items: flex-end; gap: 12px; height: 160px; margin-bottom: 8px; }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; }
+    .chart-bar {
+      width: 100%;
+      max-width: 48px;
+      background: linear-gradient(to top, var(--gradient-start), var(--gradient-end));
+      border-radius: 6px 6px 0 0;
+      min-height: 4px;
+      margin-top: auto;
+    }
+    .chart-label { font-size: 0.7rem; color: var(--text-muted); }
+    .chart-value { font-size: 0.75rem; color: var(--accent-light); }
+    .admin-section { margin-bottom: 40px; }
+    .admin-section h2 { font-size: 1.25rem; margin-bottom: 16px; }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .logout-btn:hover { border-color: var(--accent); color: var(--text-primary); }
+    .error-msg { color: #f87171; margin-top: 12px; }
+    .setup-box {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 20px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+    .refresh-info { color: var(--text-muted); font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <main class="admin-page">
+    <div class="container">
+      <div id="login-view" class="login-box">
+        <h1>📊 访问统计后台</h1>
+        <p>输入管理密码查看网站访问数据（密码在 Vercel 环境变量 ADMIN_PASSWORD 中设置）</p>
+        <input type="password" id="password-input" placeholder="管理密码" autocomplete="current-password">
+        <button class="btn btn-primary" id="login-btn">登录</button>
+        <p class="error-msg hidden" id="login-error"></p>
+      </div>
+
+      <div id="stats-view" class="stats-panel hidden">
+        <div class="stats-header">
+          <div>
+            <h1>游略阁 · 访问数据</h1>
+            <p class="refresh-info" id="updated-at"></p>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <button class="btn btn-outline" id="refresh-btn">刷新</button>
+            <button class="logout-btn" id="logout-btn">退出</button>
+          </div>
+        </div>
+
+        <div class="stats-cards">
+          <div class="stat-card">
+            <strong id="total-pv">—</strong>
+            <span>总访问量 (PV)</span>
+          </div>
+          <div class="stat-card">
+            <strong id="today-pv">—</strong>
+            <span>今日 PV</span>
+          </div>
+          <div class="stat-card">
+            <strong id="today-uv">—</strong>
+            <span>今日访客 (UV)</span>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h2>近 7 日趋势</h2>
+          <div class="chart-bars" id="chart-bars"></div>
+        </div>
+
+        <div class="admin-section">
+          <h2>热门页面 TOP 20</h2>
+          <table class="data-table" id="pages-table">
+            <thead><tr><th>页面</th><th>访问量</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="admin-section">
+          <h2>最近 50 次访问</h2>
+          <table class="data-table" id="recent-table">
+            <thead><tr><th>时间</th><th>页面</th><th>来源</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="setup-box hidden" id="setup-box"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'youluoge_admin_token';
+
+    const loginView = document.getElementById('login-view');
+    const statsView = document.getElementById('stats-view');
+    const passwordInput = document.getElementById('password-input');
+    const loginError = document.getElementById('login-error');
+
+    function showLogin() {
+      loginView.classList.remove('hidden');
+      statsView.classList.add('hidden');
+    }
+
+    function showStats() {
+      loginView.classList.add('hidden');
+      statsView.classList.remove('hidden');
+    }
+
+    function getToken() {
+      return sessionStorage.getItem(STORAGE_KEY);
+    }
+
+    async function fetchStats(token) {
+      const res = await fetch('/api/stats', {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      const data = await res.json();
+      if (!res.ok) throw data;
+      return data;
+    }
+
+    function renderStats(data) {
+      document.getElementById('total-pv').textContent = data.total.toLocaleString();
+      document.getElementById('today-pv').textContent = (data.today?.pv || 0).toLocaleString();
+      document.getElementById('today-uv').textContent = (data.today?.uv || 0).toLocaleString();
+      document.getElementById('updated-at').textContent = '更新于 ' + new Date(data.updatedAt).toLocaleString('zh-CN');
+
+      const maxPv = Math.max(...data.daily.map(d => d.pv), 1);
+      document.getElementById('chart-bars').innerHTML = data.daily.map(d => {
+        const h = Math.round((d.pv / maxPv) * 100);
+        const label = d.date.slice(5);
+        return `<div class="chart-bar-wrap">
+          <span class="chart-value">${d.pv}</span>
+          <div class="chart-bar" style="height:${h}%"></div>
+          <span class="chart-label">${label}</span>
+        </div>`;
+      }).join('');
+
+      document.querySelector('#pages-table tbody').innerHTML = data.pages.length
+        ? data.pages.map(p => `<tr><td>${escapeHtml(p.path)}</td><td>${p.count}</td></tr>`).join('')
+        : '<tr><td colspan="2">暂无数据</td></tr>';
+
+      document.querySelector('#recent-table tbody').innerHTML = data.recent.length
+        ? data.recent.map(r => `<tr>
+            <td>${formatTime(r.time)}</td>
+            <td>${escapeHtml(r.path)}</td>
+            <td>${escapeHtml(r.referrer || '直接访问')}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="3">暂无数据</td></tr>';
+
+      document.getElementById('setup-box').classList.add('hidden');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatTime(iso) {
+      return new Date(iso).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    }
+
+    async function loadDashboard() {
+      const token = getToken();
+      if (!token) { showLogin(); return; }
+      try {
+        const data = await fetchStats(token);
+        renderStats(data);
+        showStats();
+      } catch (err) {
+        if (err.error === '统计数据库未连接') {
+          showStats();
+          document.getElementById('setup-box').classList.remove('hidden');
+          document.getElementById('setup-box').innerHTML = '⚠️ 统计数据库尚未连接。请在 Vercel 项目中创建 KV 数据库并绑定环境变量，详见项目根目录「部署说明.txt」。';
+        } else {
+          sessionStorage.removeItem(STORAGE_KEY);
+          loginError.textContent = err.error || '登录失败，请检查密码';
+          loginError.classList.remove('hidden');
+          showLogin();
+        }
+      }
+    }
+
+    document.getElementById('login-btn').addEventListener('click', async () => {
+      const pwd = passwordInput.value.trim();
+      if (!pwd) return;
+      loginError.classList.add('hidden');
+      try {
+        const data = await fetchStats(pwd);
+        sessionStorage.setItem(STORAGE_KEY, pwd);
+        renderStats(data);
+        showStats();
+      } catch (err) {
+        loginError.textContent = err.error || '密码错误';
+        loginError.classList.remove('hidden');
+      }
+    });
+
+    passwordInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('login-btn').click();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      sessionStorage.removeItem(STORAGE_KEY);
+      passwordInput.value = '';
+      showLogin();
+    });
+
+    document.getElementById('refresh-btn').addEventListener('click', loadDashboard);
+
+    loadDashboard();
+  </script>
+</body>
+</html>

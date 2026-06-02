@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>攻略大全 — 游略阁</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⚔</span>
+        <span>游略阁</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="guides.html" class="active">攻略大全</a></li>
+        <li><a href="guides.html?cat=rpg">RPG</a></li>
+        <li><a href="guides.html?cat=action">动作</a></li>
+        <li><a href="guides.html?cat=strategy">策略</a></li>
+      </ul>
+      <div class="nav-search">
+        <input type="search" id="nav-search" placeholder="搜索游戏或攻略..." aria-label="搜索">
+        <button id="nav-search-btn" aria-label="搜索">🔍</button>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="菜单">☰</button>
+    </div>
+  </nav>
+
+  <main class="guides-page">
+    <div class="container">
+      <div class="page-header">
+        <h1 id="page-title">攻略大全</h1>
+        <p id="page-desc">探索全部游戏攻略，找到你需要的通关秘籍</p>
+      </div>
+
+      <div class="guides-toolbar">
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-tab active" data-cat="all">全部</button>
+          <button class="filter-tab" data-cat="rpg">RPG</button>
+          <button class="filter-tab" data-cat="action">动作</button>
+          <button class="filter-tab" data-cat="strategy">策略</button>
+          <button class="filter-tab" data-cat="openworld">开放世界</button>
+          <button class="filter-tab" data-cat="indie">独立</button>
+          <button class="filter-tab" data-cat="multiplayer">联机</button>
+        </div>
+        <div class="sort-box">
+          <label for="sort-select">排序：</label>
+          <select id="sort-select">
+            <option value="hot">热度优先</option>
+            <option value="new">最新更新</option>
+            <option value="name">名称 A-Z</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="result-count" id="result-count"></p>
+      <div class="guide-grid" id="guide-list"></div>
+      <div class="empty-state hidden" id="empty-state">
+        <span class="empty-icon">🔍</span>
+        <h3>未找到相关攻略</h3>
+        <p>试试其他关键词或分类</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">⚔</span>
+          <span>游略阁</span>
+        </a>
+        <p>致力于为玩家提供最优质的游戏攻略内容</p>
+      </div>
+      <div class="footer-links">
+        <h4>快速链接</h4>
+        <a href="guides.html">攻略大全</a>
+        <a href="guides.html?cat=rpg">RPG 攻略</a>
+        <a href="guides.html?cat=action">动作攻略</a>
+      </div>
+      <div class="footer-links">
+        <h4>关于</h4>
+        <a href="#">关于我们</a>
+        <a href="#">投稿指南</a>
+        <a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 游略阁 · 仅供学习交流使用</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data-core.js"></script>
+  <script src="js/guides-part1.js"></script>
+  <script src="js/guides-part2.js"></script>
+  <script src="js/guides-part3.js"></script>
+  <script src="js/guides-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/guides.js"></script>
+  <script src="js/analytics.js"></script>
+</body>
+</html>

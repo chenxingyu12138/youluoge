@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游略阁 — 精品游戏攻略</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⚔</span>
+        <span>游略阁</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">首页</a></li>
+        <li><a href="guides.html">攻略大全</a></li>
+        <li><a href="guides.html?cat=rpg">RPG</a></li>
+        <li><a href="guides.html?cat=action">动作</a></li>
+        <li><a href="guides.html?cat=strategy">策略</a></li>
+      </ul>
+      <div class="nav-search">
+        <input type="search" id="nav-search" placeholder="搜索游戏或攻略..." aria-label="搜索">
+        <button id="nav-search-btn" aria-label="搜索">🔍</button>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="菜单">☰</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="container hero-content">
+      <p class="hero-tag">你的冒险，从这里开始</p>
+      <h1>发现最全面的<br><span class="gradient-text">游戏攻略</span></h1>
+      <p class="hero-desc">涵盖角色养成、Boss 打法、隐藏要素与全收集指南，助你轻松通关每一款大作。</p>
+      <div class="hero-actions">
+        <a href="guides.html" class="btn btn-primary">浏览全部攻略</a>
+        <a href="#featured" class="btn btn-outline">热门推荐</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>15</strong><span>款游戏</span></div>
+        <div class="stat"><strong>103</strong><span>篇攻略</span></div>
+        <div class="stat"><strong>50万+</strong><span>玩家信赖</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="categories">
+    <div class="container">
+      <h2 class="section-title">游戏分类</h2>
+      <div class="category-grid">
+        <a href="guides.html?cat=rpg" class="category-card" data-cat="rpg">
+          <span class="cat-icon">🗡</span>
+          <h3>RPG</h3>
+          <p>角色扮演 · 剧情探索</p>
+        </a>
+        <a href="guides.html?cat=action" class="category-card" data-cat="action">
+          <span class="cat-icon">⚡</span>
+          <h3>动作</h3>
+          <p>战斗技巧 · Boss 攻略</p>
+        </a>
+        <a href="guides.html?cat=strategy" class="category-card" data-cat="strategy">
+          <span class="cat-icon">♟</span>
+          <h3>策略</h3>
+          <p>阵容搭配 · 资源规划</p>
+        </a>
+        <a href="guides.html?cat=openworld" class="category-card" data-cat="openworld">
+          <span class="cat-icon">🌍</span>
+          <h3>开放世界</h3>
+          <p>地图探索 · 全收集</p>
+        </a>
+        <a href="guides.html?cat=indie" class="category-card" data-cat="indie">
+          <span class="cat-icon">✨</span>
+          <h3>独立游戏</h3>
+          <p>小众精品 · 深度解析</p>
+        </a>
+        <a href="guides.html?cat=multiplayer" class="category-card" data-cat="multiplayer">
+          <span class="cat-icon">👥</span>
+          <h3>多人联机</h3>
+          <p>团队配合 · 竞技上分</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured" id="featured">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">热门攻略</h2>
+        <a href="guides.html" class="view-all">查看全部 →</a>
+      </div>
+      <div class="guide-grid" id="featured-guides"></div>
+    </div>
+  </section>
+
+  <section class="latest">
+    <div class="container">
+      <h2 class="section-title">最新更新</h2>
+      <div class="latest-list" id="latest-guides"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">⚔</span>
+          <span>游略阁</span>
+        </a>
+        <p>致力于为玩家提供最优质的游戏攻略内容</p>
+      </div>
+      <div class="footer-links">
+        <h4>快速链接</h4>
+        <a href="guides.html">攻略大全</a>
+        <a href="guides.html?cat=rpg">RPG 攻略</a>
+        <a href="guides.html?cat=action">动作攻略</a>
+      </div>
+      <div class="footer-links">
+        <h4>关于</h4>
+        <a href="#">关于我们</a>
+        <a href="#">投稿指南</a>
+        <a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 游略阁 · 仅供学习交流使用</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data-core.js"></script>
+  <script src="js/guides-part1.js"></script>
+  <script src="js/guides-part2.js"></script>
+  <script src="js/guides-part3.js"></script>
+  <script src="js/guides-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/analytics.js"></script>
+</body>
+</html>
