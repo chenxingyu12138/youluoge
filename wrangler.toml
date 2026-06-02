@@ -1,0 +1,6 @@
+name = "youluoge"
+compatibility_date = "2026-06-02"
+pages_build_output_dir = "."
+
+[observability]
+enabled = true

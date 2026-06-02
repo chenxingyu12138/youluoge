@@ -1,0 +1,15 @@
+node_modules/
+.git/
+.wrangler/
+.vercel/
+api/
+.env
+.env.local
+*.log
+.gitignore
+package.json
+package-lock.json
+bun.lock
+wrangler.toml
+wrangler.jsonc
+部署说明.txt
