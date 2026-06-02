@@ -1,74 +1,87 @@
-游略阁 — 免费部署与访问统计配置说明
+游略阁 — 部署说明（含国内访问方案）
 ================================
-
-【重要】国内访问说明
---------------------------------
-Vercel 域名（*.vercel.app）在中国大陆经常无法打开或极慢。
-推荐改用 Cloudflare Pages（*.pages.dev），国内一般可正常访问。
 
 GitHub 仓库：https://github.com/chenxingyu12138/youluoge
 
 
-一、Cloudflare Pages 部署（国内推荐）
+【为什么 youluoge.pages.dev 打不开？】
+--------------------------------
+网站已成功部署，海外可正常访问。
+若你打不开，通常是本地 DNS 被劫持/污染（公司网络常见）。
+
+自查：命令行执行 nslookup youluoge.pages.dev
+  - 正常应解析到 Cloudflare IP（104.x / 172.x 段）
+  - 若出现 221.x、127.0.0.1、::1 等，说明 DNS 被污染
+
+临时解决：
+  1. 把 DNS 改为 223.5.5.5 或 114.114.114.114
+  2. 用手机 4G/5G 热点访问（绕过公司 WiFi）
+  3. 使用下方 Gitee Pages 方案（国内最稳）
+
+
+一、Gitee Pages 部署（★ 国内用户推荐）
 --------------------------------
 
-⚠️ 部署失败 Asset too large 的原因：
-   创建了 Worker 项目，或 Build command 填了「npx wrangler deploy」，
-   导致把整个目录（含 node_modules）当作静态文件上传。
+适合：国内访客、公司网络、无需 VPN
 
-正确步骤：
+1. 注册 Gitee：https://gitee.com
 
-1. Cloudflare 控制台 → Workers & Pages → Create application
-   → 选择 **Pages** 标签（不要选 Worker！）
-   → Connect to Git → 选择 youluoge 仓库
+2. 导入 GitHub 仓库
+   右上角 + → 从 GitHub/GitLab 导入仓库
+   → 填入 https://github.com/chenxingyu12138/youluoge
+   → 导入（公开仓库）
 
-2. 构建设置（必须这样填）：
-   Framework preset : None
-   Build command    : （完全留空！）
-   Build output     : /
-   Root directory   : /
+3. 开启 Pages
+   进入 youluoge 仓库 → 服务 → Gitee Pages
+   → 部署分支：main
+   → 部署目录：/（根目录）
+   → 点击启动/更新
 
-3. Save and Deploy，等待 1-2 分钟
+4. 获得访问地址（约 1 分钟生效）
+   https://你的Gitee用户名.gitee.io/youluoge/
+   例：https://chenxingyu12138.gitee.io/youluoge/
 
-4. 若已有项目失败，修改设置后重试：
-   Pages → youluoge → Settings → Builds
-   → 清空 Build command → Save
-   → Deployments → Retry deployment
+5. 开启访问统计（51.la，免费，国内可用）
+   a) 打开 https://www.51.la 注册
+   b) 添加网站，获得统计 ID（一串字符）
+   c) 编辑仓库中 js/analytics-config.js
+      把 LA_ID: '' 改为 LA_ID: '你的ID'
+   d) 提交后 Gitee Pages → 更新（重新部署）
+   e) 登录 51.la 后台查看 PV/UV/来源
 
-5. 访问地址：https://youluoge.pages.dev
-
-6. 开启访问统计：
-   a) KV → Create namespace（名称 youluoge-stats）
-   b) Pages → Settings → Functions → KV bindings
-      Variable: STATS_KV → 选择 youluoge-stats
-   c) Settings → Environment variables
-      ADMIN_PASSWORD = 你的管理密码
-   d) Deployments → Retry deployment
-
-7. 统计后台：https://youluoge.pages.dev/admin
+注意：Gitee 为纯静态托管，/admin 自建统计不可用，请用 51.la。
 
 
-二、Vercel 部署（海外访问友好）
+二、Cloudflare Pages（海外 / 部分国内网络）
 --------------------------------
 
-1. 安装 GitHub 集成：https://github.com/apps/vercel
-2. 导入：https://vercel.com/new/import?s=https://github.com/chenxingyu12138/youluoge
-3. 访问：https://youluoge.vercel.app（国内可能打不开）
-4. 统计：Storage → KV → Connect → 设置 ADMIN_PASSWORD → Redeploy
-5. 后台：https://youluoge.vercel.app/admin
+正式地址：https://youluoge.pages.dev
+（国内很多网络仍无法访问，见顶部说明）
+
+部署：Workers & Pages → Pages → Connect Git → youluoge
+Build command 留空，Build output: /
+
+统计：KV 绑定 STATS_KV + 环境变量 ADMIN_PASSWORD
+后台：https://youluoge.pages.dev/admin
 
 
-三、常见问题
+三、Vercel（海外）
 --------------------------------
 
-Q: Cloudflare 报 Asset too large / workerd 119 MiB？
-A: Build command 必须留空。不要用 Worker 项目，要用 Pages 项目。
+https://youluoge.vercel.app（国内通常打不开）
 
-Q: youluoge.vercel.app 打不开？
-A: 国内网络限制，请用 Cloudflare Pages 域名分享。
 
-Q: 统计一直是 0？
-A: 确认 KV 已绑定并 Redeploy，浏览几个页面后再刷新 admin。
+四、常见问题
+--------------------------------
 
-Q: admin 密码错误？
-A: 检查 ADMIN_PASSWORD 环境变量，重新部署后再试。
+Q: pages.dev 和 vercel.app 都打不开？
+A: 正常，请用 Gitee Pages（第一节）。
+
+Q: Gitee Pages 更新后内容没变？
+A: 服务 → Gitee Pages → 点「更新」重新部署。
+
+Q: 51.la 没数据？
+A: 确认 analytics-config.js 已填 LA_ID 并重新部署 Pages。
+
+Q: 想同时给国内外用户访问？
+A: 国内分享 Gitee 链接，海外分享 youluoge.pages.dev。
